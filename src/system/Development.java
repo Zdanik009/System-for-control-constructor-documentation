@@ -1,32 +1,52 @@
 package system;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 public class Development {
-    private boolean Document1 = false;
-    private boolean Document2 = false;
-    private boolean Document3 = false;
-    private boolean Document4 = false;
+    private Map<Character,Boolean> documents = new HashMap<Character, Boolean>();
+    //private ArrayList<Boolean> documents = new ArrayList<Boolean>();
     private String name;
     private int index;
 
     public  Development(String name, int index){
         this.name = name;
         this.index = index;
+        //this.documents.get(index).put(nameOfDoc,state);
+        //this.documents.add(0,false);
     };
 
-    public void setStateOfDocuments(boolean document1, boolean document2, boolean document3, boolean document4) {
-        Document1 = document1;
-        Document2 = document2;
-        Document3 = document3;
-        Document4 = document4;
+    public void addDocument(Character nameOfDoc, Boolean state){
+        this.documents.put(nameOfDoc,state);
+        //this.documents.add(index,(Boolean) state);
     };
 
-    public boolean getStateOfDoc1(){ return Document1; };
+    /*public void setStateOfDocuments(ArrayList<Boolean> documents) {
+        this.documents.addAll(documents);
+    };*/
 
-    public boolean getStateOfDoc2(){ return Document2; };
+    public void setStateofDoc(String key, Boolean state){
+        //String nameOfDoc = this.documents.get(index).;
+        this.documents.put(key.charAt(0), state);
+        //this.documents.set(index,state);
+    };
 
-    public boolean getStateOfDoc3(){ return Document3; };
+    public boolean getStateOfDocument(String key){
+        return this.documents.get(key.charAt(0)).booleanValue();
+    };
 
-    public boolean getStateOfDoc4(){ return Document4; };
+    //public boolean getStateOfDocument(String key) { return this.documents.get(key).booleanValue(); };
+
+    public Character getNameOfDocument(int index) {
+        Character[] nameOfDoc = new Character[26];
+        Set<Character> characterSet = this.documents.keySet();
+        characterSet.toArray(nameOfDoc);
+        return nameOfDoc[index];
+    };
+
+    public int getCountOfDocuments() { return this.documents.size(); };
 
     public void setName(String name) {
         name = name;

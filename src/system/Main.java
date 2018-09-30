@@ -16,8 +16,8 @@ public class Main {
     static OutputStream fileOutputStream;
     static StringTokenizer stringTokenizer;
     public static void main(String[] args){
-        String REPORTFILEADRESS = "D://IntelliJ IDEA//LABA//DataAboutDetails.txt";
-        String INPUTDATAFILE = "D://IntelliJ IDEA//LABA//InputData.txt";
+        String REPORTFILEADRESS = "D://project//DataAboutDetails.txt";
+        String INPUTDATAFILE = "D://project//InputData.txt";
         report = new StringBuffer(200);
         try(FileInputStream fileInputStream = new FileInputStream(INPUTDATAFILE)) {
 
@@ -37,16 +37,17 @@ public class Main {
                     namesOfDetails.remove(item);
                 }
             };
+
+            final Random random = new Random();
             ArrayList<Development> listOfDetail = new ArrayList<>();
             for(int i=0;i<namesOfDetails.size();i++){
                 listOfDetail.add(i,new Development(namesOfDetails.get(i),i));
+                char A = 'A';
+                int amountOfDocs = random.nextInt(4)+1;
+                for (int j=0;j<amountOfDocs;j++,A++)
+                    listOfDetail.get(i).addDocument((Character) A,(Boolean) random.nextBoolean());
             };
 
-            final Random random = new Random();
-            for (Development details : listOfDetail) {
-                details.setStateOfDocuments(random.nextBoolean(), random.nextBoolean(),
-                        random.nextBoolean(), random.nextBoolean());
-            }
             GUI.createGUI(listOfDetail, fileOutputStream, report);
         }
         catch (IOException ex){
