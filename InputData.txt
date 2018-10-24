@@ -1,0 +1,4 @@
+Details that will be developed: "reel", "pinion"
+"spring", 
+"anchor"
+"clutch", "".

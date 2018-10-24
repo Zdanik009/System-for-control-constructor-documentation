@@ -6,7 +6,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.StringTokenizer;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +14,7 @@ public class Main {
     static StringBuffer report;
     static BufferedReader reader;
     static OutputStream fileOutputStream;
-    static StringTokenizer stringTokenizer;
+    static SetOfDocuments standart;
     public static void main(String[] args){
         String REPORTFILEADRESS = "D://project//DataAboutDetails.txt";
         String INPUTDATAFILE = "D://project//InputData.txt";
@@ -38,17 +38,16 @@ public class Main {
                 }
             };
 
-            final Random random = new Random();
+            Random random = new Random();
+            standart = new SetOfDocuments();
             ArrayList<Development> listOfDetail = new ArrayList<>();
+            ArrayList<SetOfDocuments>  setOfDocumentsArrayList = new ArrayList<>();
             for(int i=0;i<namesOfDetails.size();i++){
-                listOfDetail.add(i,new Development(namesOfDetails.get(i),i));
-                char A = 'A';
-                int amountOfDocs = random.nextInt(4)+1;
-                for (int j=0;j<amountOfDocs;j++,A++)
-                    listOfDetail.get(i).addDocument((Character) A,(Boolean) random.nextBoolean());
+                listOfDetail.add(i,new Development(namesOfDetails.get(i),i, SetOfDocuments.getSubSetOf(standart)));
+                setOfDocumentsArrayList.add(listOfDetail.get(i).getSetOfDocuments());
             };
 
-            GUI.createGUI(listOfDetail, fileOutputStream, report);
+            GUI.createGUI(listOfDetail, setOfDocumentsArrayList, fileOutputStream, report);
         }
         catch (IOException ex){
             System.out.println(ex.getMessage());
