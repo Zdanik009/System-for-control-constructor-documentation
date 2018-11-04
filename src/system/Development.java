@@ -1,12 +1,6 @@
 package system;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 public class Development {
-    //private Map<Character,Boolean> documents = new HashMap<Character, Boolean>();
     private SetOfDocuments setOfDocuments;
     private String name;
     private int index;

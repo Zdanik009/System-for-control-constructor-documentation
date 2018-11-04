@@ -4,14 +4,31 @@ import system.Development;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.*;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.DigestException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GUI{
     static JFrame frame;
+    static JMenuBar menuBar;
+    static JMenu systemMenuBar;
+    static JMenuItem addingDetailMenuItem;
+    static JMenuItem addingDocMenuItem;
+    static JMenuItem addingSetMenuItem;
+    static JMenuItem saveSessionMenuItem;
+    static JMenu informationMenuBar;
+    static JMenuItem helpMenuItem;
+    static JMenuItem aboutProgrammMenuItem;
+    static JMenuItem aboutAuthorMenuItem;
     static JPanel panel;
     static JLabel detailsLabel;
     static JComboBox detailComboBox;
@@ -25,28 +42,64 @@ public class GUI{
     static int items;
     static JProgressBar progressBar;
     static JButton confirmButton;
+    static ArrayList<String> listOfActionsTime;
+    static JFileChooser fileChooser;
+    //static Path IMAGEICONSPATH = Paths.get("D://project//clipart/");
 
-    public static void createGUI(ArrayList<Development> listOfDetail, ArrayList<SetOfDocuments> setOfDocumentsArrayList, OutputStream fileOutputStream, StringBuffer report) {
+    public static void createGUI(ArrayList<Development> listOfDetail, ArrayList<SetOfDocuments> setOfDocumentsArrayList, Path REPORTFILEADRESS) {
         frame = new JFrame("System for control constructor documentation");
-        //frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
+        menuBar = new JMenuBar();
+        systemMenuBar = new JMenu("System");
+        addingDetailMenuItem = new JMenuItem("Add Detail");
+        addingDetailMenuItem.setEnabled(false);
+        addingDocMenuItem = new JMenuItem("Add Document");
+        addingDocMenuItem.setEnabled(false);
+        addingSetMenuItem = new JMenuItem("Add Set of Documents");
+        addingSetMenuItem.setEnabled(false);
+        listOfActionsTime = new ArrayList<String>();
+        saveSessionMenuItem = new JMenuItem("Save session");
+        saveSessionMenuItem.setEnabled(false);
+        informationMenuBar = new JMenu("Information");
+        helpMenuItem = new JMenuItem("Help");
+        aboutProgrammMenuItem = new JMenuItem("About Programm");
+        aboutAuthorMenuItem = new JMenuItem("About the Author");
         detailsLabel = new JLabel("Details:");
         detailComboBox = new JComboBox();
-        textArea = new JTextArea("<= Choose detail.",15,25);
+        detailComboBox.setToolTipText("list of details. Choose anyone.");
+        textArea = new JTextArea("<= Please, choose any detail for start.",15,25);
+        textArea.setToolTipText("information output field.");
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        addDetailDialogButton = new JButton("Add Detail");
+        addDetailDialogButton = new JButton("   Add Detail", createIcon("cliparts/gear1.png"));
+        addDetailDialogButton.setToolTipText("create and add detail");
         documentsLabel = new JLabel("Documents:");
-        addDocDialogButton = new JButton("Add Document");
-        addSetDialogButton = new JButton("Add Set of Documents");
+        addDocDialogButton = new JButton("  Add Document", createIcon("cliparts/document.png"));
+        addDocDialogButton.setToolTipText("create and add document");
+        addSetDialogButton = new JButton("  Add Set of Documents", createIcon("cliparts/set_of_documents.png"));
+        addSetDialogButton.setToolTipText("create and add set of documents");
         stateCheckBox = new Checkbox();
         documentComboBox = new JComboBox();
+        documentComboBox.setToolTipText("list of documents");
         progressBar = new JProgressBar();
-        confirmButton = new JButton("Confirm readiness");
+        progressBar.setToolTipText("document collection progress");
+        confirmButton = new JButton("   Confirm readiness", createIcon("cliparts/tick.png"));
+        confirmButton.setToolTipText("send detail for development");
         GridBagConstraints c = new GridBagConstraints();
+
+        systemMenuBar.add(addingDetailMenuItem);
+        systemMenuBar.add(addingDocMenuItem);
+        systemMenuBar.add(addingSetMenuItem);
+        systemMenuBar.add(saveSessionMenuItem);
+        menuBar.add(systemMenuBar);
+
+        informationMenuBar.add(helpMenuItem);
+        informationMenuBar.add(aboutProgrammMenuItem);
+        informationMenuBar.add(aboutAuthorMenuItem);
+        menuBar.add(informationMenuBar);
 
         c.anchor = GridBagConstraints.WEST;
         c.fill   = GridBagConstraints.NONE;
@@ -67,11 +120,6 @@ public class GUI{
         c.gridwidth  = 2;
         c.gridx = 2;
         c.gridy = 0;
-        /*for (Development items:listOfDetail) {
-            detailComboBox.addItem(items.getName());
-        };
-        items = detailComboBox.getItemCount();
-        detailComboBox.setSelectedIndex(-1);*/
         updateListOfDetails(listOfDetail,-1);
         panel.add(detailComboBox, c);
 
@@ -143,12 +191,14 @@ public class GUI{
         confirmButton.setEnabled(false);
         panel.add(confirmButton, c);
 
+        frame.setJMenuBar(menuBar);
         frame.getContentPane().add(panel);
         frame.setPreferredSize(new Dimension(580, 380));
 
         frame.pack();
         frame.setVisible(true);
-        Controler.ActionListening(listOfDetail, setOfDocumentsArrayList, fileOutputStream, report);
+        frame.setResizable(false);
+        Controler.ActionListening(listOfDetail, setOfDocumentsArrayList, REPORTFILEADRESS);
     };
 
     public static void updateStateOfDocuments(ArrayList<Development> listOfDetail){
@@ -163,6 +213,12 @@ public class GUI{
         GUI.textArea.setText("You choose \"" + GUI.detailComboBox.getSelectedItem() + "\" " + (GUI.detailComboBox.getSelectedIndex() + 1)
                 + "/" + GUI.items + ".\nDetail need to have documents: "+docs+".\n"+GUI.stateOfDocuments(listOfDetail.get(GUI.detailComboBox.getSelectedIndex())));
     };
+
+    public static void writeActionHistory(String action){
+        Date dateOfAction = new Date();
+        String timeAndAction = dateOfAction+" - "+action;
+        listOfActionsTime.add(timeAndAction);
+    }
 
     public static void updateListOfDetails(ArrayList<Development> listOfDetail, int indexOfNewDetail){
         GUI.detailComboBox.removeAllItems();
@@ -201,8 +257,9 @@ public class GUI{
         return (int) progress;
     };
 
-    public static void saveReportToFile(OutputStream fileOutputStream, StringBuffer report){
+    public static void saveReportToFile(Path REPORTFILEADRESS, String report){
         try {
+            FileOutputStream fileOutputStream = new FileOutputStream(REPORTFILEADRESS.toFile(), true);
             for(int i=0;i<report.length();i++) {
                 fileOutputStream.write(report.charAt(i));
             };
@@ -212,4 +269,17 @@ public class GUI{
             throw new RuntimeException(e);
         }
     };
+
+    protected static ImageIcon createIcon(String path) {
+        URL imgURL = GUI.class.getResource(path);
+        if (imgURL != null) {
+            ImageIcon icon = new ImageIcon(imgURL);
+            Image image = icon.getImage();
+            Image newImage = image.getScaledInstance(20,20, Image.SCALE_SMOOTH);
+            return new ImageIcon(newImage);
+        } else {
+            System.err.println("File not found " + path);
+            return null;
+        }
+    }
 }

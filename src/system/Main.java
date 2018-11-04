@@ -1,28 +1,28 @@
 package system;
 
-import system.Development;
-
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-    static StringBuffer report;
-    static BufferedReader reader;
-    static OutputStream fileOutputStream;
-    static SetOfDocuments standart;
-    public static void main(String[] args){
-        String REPORTFILEADRESS = "D://project//DataAboutDetails.txt";
-        String INPUTDATAFILE = "D://project//InputData.txt";
-        report = new StringBuffer(200);
-        try(FileInputStream fileInputStream = new FileInputStream(INPUTDATAFILE)) {
 
-            reader = new BufferedReader(new InputStreamReader(fileInputStream, Charset.forName("UTF-8")));
-            fileOutputStream = new FileOutputStream(REPORTFILEADRESS, true);
+    static BufferedReader reader;
+    static SetOfDocuments standart;
+    static Path REPORTFILEADRESS;
+    static Path INPUTDATAFILE;
+
+    public static void main(String[] args){
+        REPORTFILEADRESS = Paths.get("D://project//DataAboutDetails.txt");
+        INPUTDATAFILE = Paths.get("D://project//InputData.txt");
+
+        try(FileInputStream fileInputData = new FileInputStream(INPUTDATAFILE.toFile())) {
+
+            reader = new BufferedReader(new InputStreamReader(fileInputData, Charset.forName("UTF-8")));
+            FileOutputStream reportFile = new FileOutputStream(REPORTFILEADRESS.toFile(), true);
 
             String dataAboutDeveloping = "";
             ArrayList<String> namesOfDetails = new ArrayList<>();
@@ -31,14 +31,16 @@ public class Main {
                     namesOfDetails.add(item);
                 }
             };
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(REPORTFILEADRESS), Charset.forName("UTF-8")));
+            reader.close();
+
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(REPORTFILEADRESS.toFile()), Charset.forName("UTF-8")));
             while((dataAboutDeveloping = reader.readLine())!=null){
                 for (String item:parsing(dataAboutDeveloping)) {
                     namesOfDetails.remove(item);
                 }
             };
+            reader.close();
 
-            Random random = new Random();
             standart = new SetOfDocuments();
             ArrayList<Development> listOfDetail = new ArrayList<>();
             ArrayList<SetOfDocuments>  setOfDocumentsArrayList = new ArrayList<>();
@@ -47,10 +49,10 @@ public class Main {
                 setOfDocumentsArrayList.add(listOfDetail.get(i).getSetOfDocuments());
             };
 
-            GUI.createGUI(listOfDetail, setOfDocumentsArrayList, fileOutputStream, report);
+            GUI.createGUI(listOfDetail, setOfDocumentsArrayList, REPORTFILEADRESS);
         }
         catch (IOException ex){
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         };
     }
     public static ArrayList<String> parsing(String data){

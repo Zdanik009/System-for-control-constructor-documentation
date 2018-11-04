@@ -6,6 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +25,7 @@ public class Dialog{
     static JComboBox comboBox;
     static JButton buttonAdd;
     static JButton buttonCancel;
+    static Path MANUALFILE = Paths.get("D://project//Manual.txt");
 
     public static void createDialogAboutDoc(JFrame frame, ArrayList<Development> listOfDetail) {
         dialog = new JDialog(frame, "Add Document", true);
@@ -218,6 +223,190 @@ public class Dialog{
         dialog.setVisible(true);
     }
 
+    public static void createDialogAboutHelp(JFrame frame){
+        dialog = new JDialog(frame, "HELP", true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        dialog.setLayout(gridBagLayout);
+        StringBuffer stringBuffer = new StringBuffer("MANUAL FILE NOT FOUND :(");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(MANUALFILE.toFile()), Charset.forName("UTF-8")));
+            stringBuffer.setLength(0);
+            String stringLine = "";
+            while((stringLine = reader.readLine())!=null){
+                if(stringLine.equals("Базовые инструкции пользования программой:")) {
+                    stringLine = "";
+                    while((stringLine = reader.readLine())!=null)
+                        stringBuffer.append(stringLine.replaceAll("[\\t]", " "));
+                }
+            }
+            reader.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        outputTextArea = new JTextArea(stringBuffer.toString(),15,30);
+        outputTextArea.setEditable(false);
+        outputTextArea.setLineWrap(true);
+        outputTextArea.setWrapStyleWord(true);
+        buttonAdd = new JButton("Read more");
+        buttonCancel = new JButton("Cancel");
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridheight = 3;
+        constraints.gridwidth = 4;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = new Insets(0, 5, 10, 5);
+        dialog.add(outputTextArea,constraints);
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridheight = 1;
+        constraints.gridwidth = 3;
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        dialog.add(buttonAdd,constraints);
+
+        constraints.gridheight = 1;
+        constraints.gridwidth = 1;
+        constraints.gridx = 3;
+        constraints.gridy = 3;
+        dialog.add(buttonCancel,constraints);
+
+        buttonOpenManualActionListener(buttonAdd);
+        buttonCancelActionListener(dialog, buttonCancel);
+
+        dialog.setPreferredSize(new Dimension(380, 380));
+        dialog.pack();
+        dialog.setVisible(true);
+    };
+
+    public static void createDialogAboutProgramm(JFrame frame){
+        dialog = new JDialog(frame, "About Programm", true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        dialog.setLayout(gridBagLayout);
+        StringBuffer stringBuffer = new StringBuffer("MANUAL FILE NOT FOUND :(");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(MANUALFILE.toFile()), Charset.forName("UTF-8")));
+            stringBuffer.setLength(0);
+            String stringLine = "";
+            while((stringLine = reader.readLine())!=null){
+                if(stringLine.contains("Версия:"))
+                    stringBuffer.append(stringLine.replace("[\\t]", " "));
+                if(stringLine.equals("Описание главного окна программы:")) {
+                    while(!(stringLine = reader.readLine()).equals("Принцип работы элементов главного окна:")) {
+                        if(!stringLine.matches("[\\n]$")&&!stringLine.equals(""))
+                            stringBuffer.append("\n"+stringLine.replaceAll("[\\t]", " "));
+                    }
+                    break;
+                }
+            }
+            reader.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        outputTextArea = new JTextArea(stringBuffer.toString(),10,34);
+        outputTextArea.setEditable(false);
+        outputTextArea.setLineWrap(true);
+        outputTextArea.setWrapStyleWord(true);
+        buttonAdd = new JButton("Read more");
+        buttonCancel = new JButton("Cancel");
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridheight = 3;
+        constraints.gridwidth = 4;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = new Insets(0, 5, 10, 5);
+        dialog.add(outputTextArea,constraints);
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridheight = 1;
+        constraints.gridwidth = 3;
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        dialog.add(buttonAdd,constraints);
+
+        constraints.gridheight = 1;
+        constraints.gridwidth = 1;
+        constraints.gridx = 3;
+        constraints.gridy = 3;
+        dialog.add(buttonCancel,constraints);
+
+        buttonOpenManualActionListener(buttonAdd);
+        buttonCancelActionListener(dialog, buttonCancel);
+
+        dialog.setPreferredSize(new Dimension(380, 380));
+        dialog.pack();
+        dialog.setVisible(true);
+    };
+
+    public static void createDialogAboutAuthor(JFrame frame){
+        dialog = new JDialog(frame, "About Author", true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        dialog.setLayout(gridBagLayout);
+        StringBuffer stringBuffer = new StringBuffer("MANUAL FILE NOT FOUND :(");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(MANUALFILE.toFile()), Charset.forName("UTF-8")));
+            stringBuffer.setLength(0);
+            String stringLine = "";
+            while((stringLine = reader.readLine())!=null){
+                if(stringLine.equals("Об авторе:")) {
+                    while(!(stringLine = reader.readLine()).equals("Описание программы \"System For Control Constructor Documentation\""))
+                        stringBuffer.append(stringLine.replaceAll("[\\t]", " ")+"\n");
+                    break;
+                }
+            }
+            reader.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        outputTextArea = new JTextArea(stringBuffer.toString(),15,30);
+        outputTextArea.setEditable(false);
+        outputTextArea.setLineWrap(true);
+        outputTextArea.setWrapStyleWord(true);
+        buttonAdd = new JButton("Read more");
+        buttonCancel = new JButton("Cancel");
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridheight = 3;
+        constraints.gridwidth = 4;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.insets = new Insets(0, 5, 10, 5);
+        dialog.add(outputTextArea,constraints);
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridheight = 1;
+        constraints.gridwidth = 3;
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        dialog.add(buttonAdd,constraints);
+
+        constraints.gridheight = 1;
+        constraints.gridwidth = 1;
+        constraints.gridx = 3;
+        constraints.gridy = 3;
+        dialog.add(buttonCancel,constraints);
+
+        buttonOpenManualActionListener(buttonAdd);
+        buttonCancelActionListener(dialog, buttonCancel);
+
+        dialog.setPreferredSize(new Dimension(380, 380));
+        dialog.pack();
+        dialog.setVisible(true);
+    };
+
     public static void buttonAddDocActionListener(JDialog dialog, JButton buttonAdd, ArrayList<Development> listOfDetail) {
         buttonAdd.addActionListener(new ActionListener() {
             @Override
@@ -228,10 +417,12 @@ public class Dialog{
                         int indexOfLastDoc = listOfDetail.get(GUI.detailComboBox.getSelectedIndex()).getCountOfDocuments();
                         detail.addDocument(inputTextField.getText().charAt(0), false);
                     }
+                    GUI.writeActionHistory("Document "+inputTextField.getText().charAt(0)+" created and added for all details");
                 }
                 else{
                     int indexOfLastDoc = listOfDetail.get(GUI.detailComboBox.getSelectedIndex()).getCountOfDocuments();
                     listOfDetail.get(GUI.detailComboBox.getSelectedIndex()).addDocument( inputTextField.getText().charAt(0), false);
+                    GUI.writeActionHistory("Document "+inputTextField.getText().charAt(0)+" created and added for "+listOfDetail.get(GUI.detailComboBox.getSelectedIndex()).getName());
                 };
                 dialog.dispose();
                 GUI.updateStateOfDocuments(listOfDetail);
@@ -262,6 +453,7 @@ public class Dialog{
                     setOfDocumentsArrayList.add(addedSet);
                     dialog.dispose();
                     GUI.updateStateOfDocuments(listOfDetail);
+                    GUI.writeActionHistory("Set of documents \""+addedSet.getNameOfSet()+"\" created and added for "+listOfDetail.get(GUI.detailComboBox.getSelectedIndex()).getName());
                 }
             }
         });
@@ -277,6 +469,7 @@ public class Dialog{
                     listOfDetail.add(indexOfNewDetail, new Development(inputTextField.getText(), indexOfNewDetail, setOfDocumentsArrayList.get(comboBox.getSelectedIndex())));
                     dialog.dispose();
                     GUI.updateListOfDetails(listOfDetail, indexOfNewDetail);
+                    GUI.writeActionHistory("Detail "+listOfDetail.get(indexOfNewDetail).getName()+" created");
                 }
             }
         });
@@ -401,6 +594,19 @@ public class Dialog{
                     buttonAdd.setEnabled(true);
             }
 
+        });
+    }
+
+    public static void buttonOpenManualActionListener(JButton buttonOpen){
+        buttonOpen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop desktop = Desktop.getDesktop();
+                    desktop.open(MANUALFILE.toFile());
+                }
+                catch (IOException ex){ ex.printStackTrace(); }
+            }
         });
     }
 
