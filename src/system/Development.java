@@ -44,7 +44,7 @@ public class Development {
         return name;
     }
 
-    public int getIndexOfDetail(String name){
+    public int getIndexOfDetail(){
         return index;
     };
 }

@@ -46,6 +46,21 @@ public class SetOfDocuments {
         return nameOfDoc[index];
     };
 
+    public int getNumberOfDocument (int index) {
+        char nameOfDocument = getNameOfDocument(index);
+        int numberOfDocument = 0;
+        for(char A = 'A' ; A != nameOfDocument ; A++ )
+            numberOfDocument++;
+        return numberOfDocument;
+    };
+
+    public int getNumberOfDocument (String key) {
+        int numberOfDocument = 0;
+        for(char A = 'A' ; A != key.charAt(0) ; A++ )
+            numberOfDocument++;
+        return numberOfDocument;
+    };
+
     public int getCountOfDocuments() { return this.documents.size(); };
 
     public static SetOfDocuments getSubSetOf(SetOfDocuments standart) {
